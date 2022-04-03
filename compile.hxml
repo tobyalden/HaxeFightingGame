@@ -1,0 +1,6 @@
+-cp src
+-lib heaps
+-lib hlsdl
+-hl fightinggame.hl
+-main Main
+-D windowSize=800x450
