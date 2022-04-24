@@ -19,19 +19,20 @@ class GameState {
 
     public function new() {
         frameCount = 0;
-        entityCount = 0;
+        entityCount = 5;
         physicsComponents = [for (i in 0...10) new PhysicsComponent()];
     }
+}
 
-    private function physicsSystem() {
-        for(physicsComponent in physicsComponents) {
-            physicsComponent.position.add(physicsComponent.velocity);
-            physicsComponent.velocity.add(physicsComponent.acceleration);
-        }
+function physicsSystem(gameState:GameState) {
+    for(entityIndex in 0...gameState.entityCount) {
+        var component = gameState.physicsComponents[entityIndex];
+        component.position.add(component.velocity);
+        component.velocity.add(component.acceleration);
     }
+}
 
-    public function updateGame() {
-        physicsSystem();
-        frameCount += 1;
-    }
+function updateGame(gameState:GameState) {
+    physicsSystem(gameState);
+    gameState.frameCount += 1;
 }

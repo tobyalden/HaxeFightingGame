@@ -1,13 +1,11 @@
-import GameSimulation.GameState;
-import utils.Math.IntVector2D;
-
 class Main extends hxd.App {
-    private var gameState:GameState;
+    private var gameState:GameSimulation.GameState;
     private var graphics:h2d.Graphics;
 
     override function init() {
-        gameState = new GameState();
-        gameState.physicsComponents[0].position = new IntVector2D(400, 200);
+        gameState = new GameSimulation.GameState();
+        gameState.physicsComponents[0].position.x = 400;
+        gameState.physicsComponents[0].position.y = 200;
         graphics = new h2d.Graphics(s2d);
     }
     
@@ -30,7 +28,7 @@ class Main extends hxd.App {
             entity.velocity.x = 0;
         }
 
-        gameState.updateGame();
+        GameSimulation.updateGame(gameState);
 
         graphics.clear();
         graphics.beginFill(0xEA8220);
