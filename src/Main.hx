@@ -1,3 +1,6 @@
+import utest.Runner;
+import utest.ui.Report;
+
 class Main extends hxd.App {
     private var gameState:GameSimulation.GameState;
     private var graphics:h2d.Graphics;
@@ -10,7 +13,15 @@ class Main extends hxd.App {
     }
     
     static function main() {
-        new Main();
+        if(Sys.args().length > 0 && Sys.args()[0] == "test") {
+            var runner = new Runner();
+            runner.addCase(new actionStates.StateMachine.StateMachineTests());
+            Report.create(runner);
+            runner.run();
+        }
+        else {
+            new Main();
+        }
     }
 
     override function update(dt:Float) {

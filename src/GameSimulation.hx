@@ -1,4 +1,5 @@
 import utils.Math.IntVector2D;
+import haxe.ds.Vector;
 
 class PhysicsComponent {
     public var position:IntVector2D;
@@ -15,15 +16,19 @@ class PhysicsComponent {
 class GameState {
     public var frameCount:Int;
     public var entityCount:Int;
-    public var physicsComponents:Array<PhysicsComponent>;
+    public var physicsComponents:Vector<PhysicsComponent>;
 
     public function new() {
         frameCount = 0;
         entityCount = 5;
-        physicsComponents = [for (i in 0...10) new PhysicsComponent()];
+        physicsComponents = new Vector(10);
+        for(i in 0...physicsComponents.length) {
+            physicsComponents[i] = new PhysicsComponent();
+        }
     }
 }
 
+// Handles moving all entities which have a physics component
 function physicsSystem(gameState:GameState) {
     for(entityIndex in 0...gameState.entityCount) {
         var component = gameState.physicsComponents[entityIndex];
