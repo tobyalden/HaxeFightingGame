@@ -13,7 +13,13 @@ enum abstract CombatStateID(Int) to Int {
 
 // A context is passed into the combat state callbacks.
 class CombatStateContext {
-    public function new() {}
+    public var bTransition:Bool;
+    public var nextState:CombatStateID;
+
+    public function new(bTransition:Bool = false, nextState:CombatStateID = CombatStateID.Standing) {
+        this.bTransition = bTransition;
+        this.nextState = nextState;
+    }
 }
 
 // Provides an interface for combat states to respond to various events
@@ -23,13 +29,15 @@ class CombatStateCallbacks {
     public var onEnd:CombatStateContext->Void;
 
     public function new(
-        ?onStart:CombatStateContext->Void,
-        ?onUpdate:CombatStateContext->Void,
-        ?onEnd:CombatStateContext->Void
+        callbacks:{
+            onStart:CombatStateContext->Void,
+            onUpdate:CombatStateContext->Void,
+            onEnd:CombatStateContext->Void
+        }
     ) {
-        this.onStart = onStart;
-        this.onUpdate = onUpdate;
-        this.onEnd = onEnd;
+        this.onStart = callbacks.onStart;
+        this.onUpdate = callbacks.onUpdate;
+        this.onEnd = callbacks.onEnd;
     }
 }
 
@@ -60,11 +68,33 @@ class CombatStateMachineProcessor {
     }
 
     public function updateStateMachine() {
-        var state = registry.combatStates[currentState];
-        if(state != null) {
-            if(state.onUpdate != null) {
-                if(context != null) {
+        if(context != null) {
+            var state = registry.combatStates[currentState];
+            if(state != null) {
+                if(state.onUpdate != null) {
                     state.onUpdate(context);
+
+                    // Perform a state transition when requested
+                    if(context.bTransition) {
+                        // Call the onEnd function of the previous state to do any cleanup required
+                        if(state.onEnd != null) {
+                            state.onEnd(context);
+                        }
+
+                        // Call the onStart function on the next state to do any setup required
+                        var nextState = registry.combatStates[context.nextState];
+                        if(nextState != null) {
+                            if(nextState.onStart != null) {
+                                nextState.onStart(context);
+                            }
+                        }
+
+                        // Make sure the transition isn't performed more than once
+                        context.bTransition = false;
+
+                        // Make the next state current
+                        currentState = context.nextState;
+                    }
                 }
             }
         }
@@ -78,21 +108,72 @@ class StateMachineTests extends utest.Test {
 
     function testRegisteringCombatState() {
         var registry = new CombatStateRegistery();
-        var testState = new CombatStateCallbacks();
+        var testState = new CombatStateCallbacks({
+            onStart: null, onUpdate: null, onEnd: null
+        });
         Assert.isNull(registry.combatStates[0]);
         registry.registerCommonState(CombatStateID.Standing, testState);
         Assert.notNull(registry.combatStates[0]);
     }
 
     function testRunningStateUpdateOnStateMachineProcessor() {
+        var testVar = false;
         var context = new CombatStateContext();
         var processor = new CombatStateMachineProcessor(context);
-        var testVar = false;
-        var testState = new CombatStateCallbacks(null, function(_:CombatStateContext) {
-            testVar = true;
+        var testState = new CombatStateCallbacks({
+            onStart: null,
+            onUpdate: function(_:CombatStateContext) {
+                testVar = true;
+            },
+            onEnd: null
         });
         processor.registry.registerCommonState(CombatStateID.Standing, testState);
         processor.updateStateMachine();
         Assert.isTrue(testVar);
+    }
+
+    function testTransitioningFromOneCommonStateToAnother() {
+        var testVar = false;
+        var testVar2 = false;
+        function standingOnUpdate(context:CombatStateContext) {
+            context.bTransition = true;
+            context.nextState = CombatStateID.Jump;
+        }
+        function standingOnEnd(context:CombatStateContext) {
+            testVar = true;
+        }
+        function jumpOnStart(context:CombatStateContext) {
+            testVar2 = true;
+        }
+
+        var context = new CombatStateContext();
+        var processor = new CombatStateMachineProcessor(context);
+
+        var standingCallbacks = new CombatStateCallbacks({
+            onStart: null,
+            onUpdate: standingOnUpdate,
+            onEnd: standingOnEnd
+        });
+        var jumpCallbacks = new CombatStateCallbacks({
+            onStart: jumpOnStart,
+            onUpdate: null,
+            onEnd: null
+        });
+
+        processor.registry.registerCommonState(CombatStateID.Standing, standingCallbacks);
+        processor.registry.registerCommonState(CombatStateID.Jump, jumpCallbacks);
+        processor.updateStateMachine();
+
+        // Test that the transition is finished
+        Assert.isFalse(context.bTransition);
+
+        // Test that the state machine correctly transitioned to the jump state
+        Assert.equals(processor.currentState, CombatStateID.Jump);
+
+        // Test to see if OnEnd was called on the previous state.
+        Assert.isTrue(testVar);
+
+        // Test to see if OnStart was called on the next state.
+        Assert.isTrue(testVar2);
     }
 }
