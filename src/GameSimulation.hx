@@ -6,7 +6,7 @@ import haxe.ds.Vector;
 
 @:structInit class StateMachineComponent {
     public var context:actionStates.StateMachine.CombatStateContext = {};
-    public var stateMachine:actionStates.StateMachine.CombatStateMachineProcessor = new actionStates.StateMachine.CombatStateMachineProcessor();
+    public var stateMachine:actionStates.StateMachine.CombatStateMachineProcessor = {};
 }
 
 var standingCallbacks:actionStates.StateMachine.CombatStateCallbacks = {

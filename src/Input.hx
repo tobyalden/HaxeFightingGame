@@ -1,5 +1,4 @@
-@:structInit
-class InputCommand {
+@:structInit class InputCommand {
     public var up:Bool = false;
     public var down:Bool = false;
     public var left:Bool = false;

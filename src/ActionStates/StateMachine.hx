@@ -37,15 +37,10 @@ enum abstract CombatStateID(Int) to Int {
 }
 
 // Runs and keeps track of a state machine
-class CombatStateMachineProcessor {
+@:structInit class CombatStateMachineProcessor {
     public var registry:CombatStateRegistery = {};
-    public var currentState:CombatStateID;
-    public var context:CombatStateContext;
-
-    public function new(?context:CombatStateContext) {
-        currentState = CombatStateID.Standing;
-        this.context = context;
-    }
+    public var currentState:CombatStateID = CombatStateID.Standing;
+    public var context:CombatStateContext = null;
 
     public function updateStateMachine() {
         if(context != null) {
@@ -97,7 +92,7 @@ class StateMachineTests extends utest.Test {
     function testRunningStateUpdateOnStateMachineProcessor() {
         var testVar = false;
         var context:CombatStateContext = {};
-        var processor = new CombatStateMachineProcessor(context);
+        var processor:CombatStateMachineProcessor = {context: context};
         var testState:CombatStateCallbacks = {
             onUpdate: function(_:CombatStateContext) {
                 testVar = true;
@@ -123,7 +118,7 @@ class StateMachineTests extends utest.Test {
         }
 
         var context:CombatStateContext = {};
-        var processor = new CombatStateMachineProcessor(context);
+        var processor:CombatStateMachineProcessor = {context: context};
 
         var standingCallbacks:CombatStateCallbacks = {
             onUpdate: standingOnUpdate,
