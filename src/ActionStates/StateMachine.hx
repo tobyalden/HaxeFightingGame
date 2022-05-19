@@ -22,19 +22,19 @@ class CombatStateContext {
     }
 }
 
+typedef CombatStateCallbacksArguments = {
+    var ?onStart:CombatStateContext->Void;
+    var ?onUpdate:CombatStateContext->Void;
+    var ?onEnd:CombatStateContext->Void;
+}
+
 // Provides an interface for combat states to respond to various events
 class CombatStateCallbacks {
     public var onStart:CombatStateContext->Void;
     public var onUpdate:CombatStateContext->Void;
     public var onEnd:CombatStateContext->Void;
 
-    public function new(
-        callbacks:{
-            onStart:CombatStateContext->Void,
-            onUpdate:CombatStateContext->Void,
-            onEnd:CombatStateContext->Void
-        }
-    ) {
+    public function new(callbacks:CombatStateCallbacksArguments) {
         this.onStart = callbacks.onStart;
         this.onUpdate = callbacks.onUpdate;
         this.onEnd = callbacks.onEnd;
@@ -108,9 +108,7 @@ class StateMachineTests extends utest.Test {
 
     function testRegisteringCombatState() {
         var registry = new CombatStateRegistery();
-        var testState = new CombatStateCallbacks({
-            onStart: null, onUpdate: null, onEnd: null
-        });
+        var testState = new CombatStateCallbacks({});
         Assert.isNull(registry.combatStates[0]);
         registry.registerCommonState(CombatStateID.Standing, testState);
         Assert.notNull(registry.combatStates[0]);
@@ -150,14 +148,11 @@ class StateMachineTests extends utest.Test {
         var processor = new CombatStateMachineProcessor(context);
 
         var standingCallbacks = new CombatStateCallbacks({
-            onStart: null,
             onUpdate: standingOnUpdate,
             onEnd: standingOnEnd
         });
         var jumpCallbacks = new CombatStateCallbacks({
-            onStart: jumpOnStart,
-            onUpdate: null,
-            onEnd: null
+            onStart: jumpOnStart
         });
 
         processor.registry.registerCommonState(CombatStateID.Standing, standingCallbacks);
