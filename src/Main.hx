@@ -25,18 +25,21 @@ class Main extends hxd.App {
     }
 
     override function update(dt:Float) {
-        var pressingLeft = hxd.Key.isDown(hxd.Key.LEFT);
-        var pressingRight = hxd.Key.isDown(hxd.Key.RIGHT);
+        // Reset input to not held down before polling
+        gameState.inputComponents[0].inputCommand.reset();
 
         var entity = gameState.physicsComponents[0];
-        if(pressingLeft) {
-            entity.velocity.x = -1;
+        if(hxd.Key.isDown(hxd.Key.UP)) {
+            gameState.inputComponents[0].inputCommand.up = true;
         }
-        else if(pressingRight) {
-            entity.velocity.x = 1;
+        if(hxd.Key.isDown(hxd.Key.DOWN)) {
+            gameState.inputComponents[0].inputCommand.down = true;
         }
-        else {
-            entity.velocity.x = 0;
+        if(hxd.Key.isDown(hxd.Key.LEFT)) {
+            gameState.inputComponents[0].inputCommand.left = true;
+        }
+        if(hxd.Key.isDown(hxd.Key.RIGHT)) {
+            gameState.inputComponents[0].inputCommand.right = true;
         }
 
         GameSimulation.updateGame(gameState);
