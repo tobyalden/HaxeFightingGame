@@ -12,8 +12,7 @@ enum abstract CombatStateID(Int) to Int {
 }
 
 // A context is passed into the combat state callbacks.
-@:structInit
-class CombatStateContext {
+@:structInit class CombatStateContext {
     public var bTransition:Bool = false;
     public var nextState:CombatStateID = CombatStateID.Standing;
     public var inputCommand:Input.InputCommand = {};
@@ -21,21 +20,16 @@ class CombatStateContext {
 }
 
 // Provides an interface for combat states to respond to various events
-@:structInit
-class CombatStateCallbacks {
+@:structInit class CombatStateCallbacks {
     public var onStart:CombatStateContext->Void = null;
     public var onUpdate:CombatStateContext->Void = null;
     public var onEnd:CombatStateContext->Void = null;
 }
 
 // Stores the combat states used for a character.
-class CombatStateRegistery {
-    final MAX_STATES = 256;
-    public var combatStates:haxe.ds.Vector<CombatStateCallbacks>;
-
-    public function new() {
-        combatStates = new haxe.ds.Vector(MAX_STATES);
-    }
+@:structInit class CombatStateRegistery {
+    public static inline final MAX_STATES = 256;
+    public var combatStates:haxe.ds.Vector<CombatStateCallbacks> = new haxe.ds.Vector(MAX_STATES);
 
     public function registerCommonState(stateID:CombatStateID, stateCallbacks:CombatStateCallbacks) {
         combatStates[stateID] = stateCallbacks;
@@ -44,12 +38,11 @@ class CombatStateRegistery {
 
 // Runs and keeps track of a state machine
 class CombatStateMachineProcessor {
-    public var registry:CombatStateRegistery;
+    public var registry:CombatStateRegistery = {};
     public var currentState:CombatStateID;
     public var context:CombatStateContext;
 
     public function new(?context:CombatStateContext) {
-        registry = new CombatStateRegistery();
         currentState = CombatStateID.Standing;
         this.context = context;
     }
@@ -94,8 +87,7 @@ class StateMachineTests extends utest.Test {
     }
 
     function testRegisteringCombatState() {
-        var registry = new CombatStateRegistery();
-        //var testState = new CombatStateCallbacks({});
+        var registry:CombatStateRegistery = {};
         var testState:CombatStateCallbacks = {};
         Assert.isNull(registry.combatStates[0]);
         registry.registerCommonState(CombatStateID.Standing, testState);
@@ -130,7 +122,6 @@ class StateMachineTests extends utest.Test {
             testVar2 = true;
         }
 
-        //var context = new CombatStateContext();
         var context:CombatStateContext = {};
         var processor = new CombatStateMachineProcessor(context);
 
