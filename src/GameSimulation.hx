@@ -1,5 +1,7 @@
 import haxe.ds.Vector;
 
+import utest.Assert;
+
 @:structInit class InputComponent {
     public var inputCommand:Input.InputCommand = {};
 }
@@ -23,12 +25,23 @@ var walkingForwardCallbacks:actionStates.StateMachine.CombatStateCallbacks = {
     onEnd: actionStates.CommonStates.WalkingForward.onEnd
 };
 
+@:structInit class GameData {
+    public var hitboxGroup:CharacterData.HitboxGroup;
+}
+
+function initializeGameData() {
+    var gameData:GameData = {hitboxGroup: {hitboxes: []}};
+    gameData.hitboxGroup.hitboxes.push({top: 200, left: 300, bottom: 0, right: 600});
+    return gameData;
+}
+
 class GameState {
     public var frameCount:Int;
     public var entityCount:Int;
     public var physicsComponents:Vector<Component.PhysicsComponent>;
     public var stateMachineComponents:Vector<StateMachineComponent>;
     public var inputComponents:Vector<InputComponent>;
+    public var gameData:GameData;
 
     public function new() {
         frameCount = 0;
@@ -48,6 +61,9 @@ class GameState {
             var inputComponent:InputComponent = {};
             inputComponents[i] = inputComponent;
         }
+
+        // Game data initialization
+        gameData = initializeGameData();
 
         // Testing initializing a single entity
         stateMachineComponents[0].context.physicsComponent = physicsComponents[0];
@@ -77,6 +93,23 @@ function actionSystem(gameState:GameState) {
     }
 }
 
+function translateHitbox(hitbox:CharacterData.Hitbox, offset:utils.Math.IntVector2D):CharacterData.Hitbox {
+    return {
+        left: hitbox.left + offset.x,
+        top: hitbox.top + offset.y,
+        right: hitbox.right + offset.x,
+        bottom: hitbox.bottom + offset.y,
+    }
+}
+
+function doHitboxesOverlap(a:CharacterData.Hitbox, b:CharacterData.Hitbox) {
+    var isNotOverlapping = (a.left > b.right) || (b.left > a.right) || (a.bottom > b.top) || (b.bottom > a.top);
+    return !isNotOverlapping;
+}
+
+function collisionSystem(gameState:GameState) {
+}
+
 function inputCommandSystem(gameState:GameState) {
     gameState.stateMachineComponents[0].context.inputCommand = gameState.inputComponents[0].inputCommand;
 }
@@ -86,4 +119,16 @@ function updateGame(gameState:GameState) {
     actionSystem(gameState);
     inputCommandSystem(gameState);
     gameState.frameCount += 1;
+}
+
+class GameSimulationTests extends utest.Test {
+    public function setupClass() {
+        // Nothing for now
+    }
+
+    function testSettingUpGameData() {
+        var gameData:GameData = {hitboxGroup: {hitboxes: []}};
+        gameData.hitboxGroup.hitboxes.push({top: 200, left: -300, bottom: 0, right: 300});
+        Assert.equals(gameData.hitboxGroup.hitboxes[0].right, 300);
+    }
 }

@@ -27,7 +27,7 @@ enum abstract CombatStateID(Int) to Int {
 }
 
 // Stores the combat states used for a character.
-@:structInit class CombatStateRegistery {
+@:structInit class CombatStateRegistry {
     public static inline final MAX_STATES = 256;
     public var combatStates:haxe.ds.Vector<CombatStateCallbacks> = new haxe.ds.Vector(MAX_STATES);
 
@@ -38,7 +38,7 @@ enum abstract CombatStateID(Int) to Int {
 
 // Runs and keeps track of a state machine
 @:structInit class CombatStateMachineProcessor {
-    public var registry:CombatStateRegistery = {};
+    public var registry:CombatStateRegistry = {};
     public var currentState:CombatStateID = CombatStateID.Standing;
     public var context:CombatStateContext = null;
 
@@ -82,7 +82,7 @@ class StateMachineTests extends utest.Test {
     }
 
     function testRegisteringCombatState() {
-        var registry:CombatStateRegistery = {};
+        var registry:CombatStateRegistry = {};
         var testState:CombatStateCallbacks = {};
         Assert.isNull(registry.combatStates[0]);
         registry.registerCommonState(CombatStateID.Standing, testState);
