@@ -9,3 +9,7 @@ package utils;
         y += other.y;
     }
 }
+
+function worldToScreen(coordinate:Int) {
+    return Std.int(coordinate / 1000);
+}

@@ -9,6 +9,8 @@ import haxe.ds.Vector;
     public var stateMachine:actionStates.StateMachine.CombatStateMachineProcessor = {};
 }
 
+// For now our only test state is a global constant.
+// Need to move this to somewhere where character specific data is stored.
 var standingCallbacks:actionStates.StateMachine.CombatStateCallbacks = {
     onStart: actionStates.CommonStates.Standing.onStart,
     onUpdate: actionStates.CommonStates.Standing.onUpdate,
