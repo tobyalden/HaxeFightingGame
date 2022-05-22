@@ -21,6 +21,10 @@ function getActiveAttackHitboxes(gameState:GameSimulation.GameState, entity:Int)
     return null;
 }
 
+@:structInit class ScratchHitboxSet {
+    public var hitboxStore:Vector<CharacterData.Hitbox> = new Vector<CharacterData.Hitbox>(10);
+}
+
 function collisionSystem(gameState:GameSimulation.GameState) {
     var attackBoxes = new Vector<CharacterData.HitboxGroup>(10);
     for(i in 0...attackBoxes.length) {

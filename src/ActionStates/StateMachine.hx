@@ -77,10 +77,6 @@ enum abstract CombatStateID(Int) to Int {
 }
 
 class StateMachineTests extends utest.Test {
-    public function setupClass() {
-        // Nothing for now
-    }
-
     function testRegisteringCombatState() {
         var registry:CombatStateRegistry = {};
         var testState:CombatStateCallbacks = {};

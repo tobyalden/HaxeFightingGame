@@ -13,6 +13,7 @@ class Main extends hxd.App {
             var runner = new Runner();
             runner.addCase(new actionStates.StateMachine.StateMachineTests());
             runner.addCase(new GameSimulation.GameSimulationTests());
+            runner.addCase(new CharacterData.CharacterDataTests());
             Report.create(runner);
             runner.run();
         }

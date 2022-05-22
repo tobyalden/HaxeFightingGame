@@ -1,5 +1,4 @@
 import haxe.ds.Vector;
-
 import utest.Assert;
 
 @:structInit class InputComponent {
@@ -105,10 +104,6 @@ function updateGame(gameState:GameState) {
 }
 
 class GameSimulationTests extends utest.Test {
-    public function setupClass() {
-        // Nothing for now
-    }
-
     function testSettingUpGameData() {
         var gameData:GameData = {hitboxGroup: {hitboxes: []}};
         gameData.hitboxGroup.hitboxes.push({top: 200, left: -300, bottom: 0, right: 300});
