@@ -1,7 +1,8 @@
 import haxe.ds.Vector;
+import utils.Math.IntVector2D;
 
 // Create a new hitbox translated by the offset provided.
-function translateHitbox(hitbox:CharacterData.Hitbox, offset:utils.Math.IntVector2D):CharacterData.Hitbox {
+function translateHitbox(hitbox:CharacterData.Hitbox, offset:IntVector2D):CharacterData.Hitbox {
     return {
         left: hitbox.left + offset.x,
         top: hitbox.top + offset.y,

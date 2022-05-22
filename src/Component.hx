@@ -1,6 +1,6 @@
 import utils.Math.IntVector2D;
-import haxe.ds.Vector;
 import hl.UI16;
+import haxe.ds.Vector;
 
 @:structInit class PhysicsComponent {
     public var position:IntVector2D = {};
