@@ -1,7 +1,3 @@
-@:structInit class CharacterProperties { 
-    public var maxHealth:Int;
-}
-
 @:structInit class Hitbox {
     public var top:Int;
     public var left:Int;
@@ -17,4 +13,11 @@
 
 @:structInit class ActionProperties {
     public var duration:Int;
+    public var hitboxGroups:Array<HitboxGroup>;
 }
+
+@:structInit class CharacterProperties { 
+    public var maxHealth:Int;
+    public var actions:Array<ActionProperties>;
+}
+

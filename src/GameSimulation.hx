@@ -46,17 +46,17 @@ class GameState {
     public function new() {
         frameCount = 0;
         entityCount = 1;
-        physicsComponents = new Vector(10);
+        physicsComponents = new Vector<Component.PhysicsComponent>(10);
         for(i in 0...physicsComponents.length) {
             var physicsComponent:Component.PhysicsComponent = {};
             physicsComponents[i] = physicsComponent;
         }
-        stateMachineComponents = new Vector(10);
+        stateMachineComponents = new Vector<StateMachineComponent>(10);
         for(i in 0...stateMachineComponents.length) {
             var stateMachineComponent:StateMachineComponent = {};
             stateMachineComponents[i] = stateMachineComponent;
         }
-        inputComponents = new Vector(2);
+        inputComponents = new Vector<InputComponent>(2);
         for(i in 0...inputComponents.length) {
             var inputComponent:InputComponent = {};
             inputComponents[i] = inputComponent;
@@ -91,23 +91,6 @@ function actionSystem(gameState:GameState) {
         var component = gameState.stateMachineComponents[entityIndex];
         component.stateMachine.updateStateMachine();
     }
-}
-
-function translateHitbox(hitbox:CharacterData.Hitbox, offset:utils.Math.IntVector2D):CharacterData.Hitbox {
-    return {
-        left: hitbox.left + offset.x,
-        top: hitbox.top + offset.y,
-        right: hitbox.right + offset.x,
-        bottom: hitbox.bottom + offset.y,
-    }
-}
-
-function doHitboxesOverlap(a:CharacterData.Hitbox, b:CharacterData.Hitbox) {
-    var isNotOverlapping = (a.left > b.right) || (b.left > a.right) || (a.bottom > b.top) || (b.bottom > a.top);
-    return !isNotOverlapping;
-}
-
-function collisionSystem(gameState:GameState) {
 }
 
 function inputCommandSystem(gameState:GameState) {
