@@ -1,4 +1,5 @@
 import haxe.ds.Vector;
+import utest.Assert;
 import utils.Math.IntVector2D;
 
 // Create a new hitbox translated by the offset provided.
@@ -23,33 +24,40 @@ function getActiveAttackHitboxes(gameState:GameSimulation.GameState, entity:Int)
 
 @:structInit class ScratchHitboxSet {
     public var hitboxStore:Vector<CharacterData.Hitbox> = new Vector<CharacterData.Hitbox>(10);
+    public var hitboxes:Vector<CharacterData.Hitbox>;
 }
 
-function collisionSystem(gameState:GameSimulation.GameState) {
-    var attackBoxes = new Vector<CharacterData.HitboxGroup>(10);
-    for(i in 0...attackBoxes.length) {
-        var attackBox:CharacterData.HitboxGroup = {};
-        attackBoxes[i] = attackBox;
-    }
-    var vulnerableBoxes = new Vector<CharacterData.HitboxGroup>(10);
-    for(i in 0...vulnerableBoxes.length) {
-        var vulnerableBox:CharacterData.HitboxGroup = {};
-        vulnerableBoxes[i] = vulnerableBox;
-    }
+@:structInit class CollisionSystem {
+    // Working memory to pass between the collision system stages
+    private var attackerEntityBoxes:Array<ScratchHitboxSet> = [];
+    private var defenderEntityBoxes:Array<ScratchHitboxSet> = [];
 
-    for(attackEntity in 0...gameState.entityCount) {
-        var attackBox = attackBoxes[attackEntity];
+    public function execute(gameState:GameSimulation.GameState) {
+        for(attackerIndex in 0...attackerEntityBoxes.length) {
+            for(attackBox in attackerEntityBoxes[attackerIndex].hitboxes) {
+                for(defenderIndex in 0...defenderEntityBoxes.length) {
+                    if(attackerIndex == defenderIndex) {
+                        continue;
+                    }
 
-        for(defendEntity in 0...gameState.entityCount) {
-            // Don't check an attacker against itself.
-            if(attackEntity == defendEntity) {
-                continue;
-            }
-
-            var vulnerableBox = vulnerableBoxes[defendEntity];
-            if(doHitboxesOverlap(attackBox, vulnerableBox)) {
-                // Generate hit event.
+                    for(vulnerableBox in defenderEntityBoxes[defenderIndex].hitboxes) {
+                        if(doHitboxesOverlap(attackBox, vulnerableBox)) {
+                            // Generate hit event
+                        }
+                    }
+                }
             }
         }
+    }
+}
+
+class CollisionSystemTests extends utest.Test {
+    function testClearingOutScratchHitboxDataEachFrame() {
+        var collisionSystem:CollisionSystem = {};
+        var gameState = new GameSimulation.GameState();
+        var character:CharacterData.CharacterProperties = {};
+        gameState.gameData.characters.push(character);
+        collisionSystem.execute(gameState);
+        // TODO: This test is unfinished. The Zig version contains asserts that fail (as of c81795d)
     }
 }

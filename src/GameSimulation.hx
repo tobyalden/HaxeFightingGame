@@ -25,12 +25,13 @@ var walkingForwardCallbacks:actionStates.StateMachine.CombatStateCallbacks = {
 };
 
 @:structInit class GameData {
-    public var hitboxGroup:CharacterData.HitboxGroup;
+    public var hitboxGroup:CharacterData.HitboxGroup;  // TODO: Temp data, remove
+    public var characters:Array<CharacterData.CharacterProperties>;
 }
 
 function initializeGameData() {
-    var gameData:GameData = {hitboxGroup: {hitboxes: []}};
-    gameData.hitboxGroup.hitboxes.push({top: 200, left: 300, bottom: 0, right: 600});
+    var gameData:GameData = {hitboxGroup: {hitboxes: []}, characters: []};
+    //gameData.hitboxGroup.hitboxes.push({top: 200, left: 300, bottom: 0, right: 600});
     return gameData;
 }
 
@@ -105,7 +106,7 @@ function updateGame(gameState:GameState) {
 
 class GameSimulationTests extends utest.Test {
     function testSettingUpGameData() {
-        var gameData:GameData = {hitboxGroup: {hitboxes: []}};
+        var gameData:GameData = {hitboxGroup: {hitboxes: []}, characters: []};
         gameData.hitboxGroup.hitboxes.push({top: 200, left: -300, bottom: 0, right: 300});
         Assert.equals(gameData.hitboxGroup.hitboxes[0].right, 300);
     }

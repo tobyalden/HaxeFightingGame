@@ -14,6 +14,8 @@ class Main extends hxd.App {
             runner.addCase(new actionStates.StateMachine.StateMachineTests());
             runner.addCase(new GameSimulation.GameSimulationTests());
             runner.addCase(new CharacterData.CharacterDataTests());
+            runner.addCase(new CollisionSystem.CollisionSystemTests());
+            runner.addCase(new Common.CommonTests());
             Report.create(runner);
             runner.run();
         }
